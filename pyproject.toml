@@ -1,0 +1,22 @@
+[project]
+name = "butterfly-generator"
+version = "0.1.0"
+description = "Random number generator using weather data"
+authors = [
+    {name = "Dr. Nobel Khandaker", email = "nobel@outlook.com"},
+]
+dependencies = [
+    "requests>=2.32.3",
+    "pytest>=8.2.2",
+]
+requires-python = ">=3.10"
+readme = "README.md"
+license = {text = "Apache 2.0"}
+
+[build-system]
+requires = ["pdm-backend"]
+build-backend = "pdm.backend"
+
+
+[tool.pdm]
+distribution = true
