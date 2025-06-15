@@ -1,5 +1,5 @@
 [project]
-name = "butterfly-generator"
+name = "TrueRandomNumberGenerator"
 version = "0.1.0"
 description = "Random number generator using weather data"
 authors = [
