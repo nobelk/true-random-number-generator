@@ -3,11 +3,12 @@ It is used for generating random numbers based on hourly weather forecasting dat
 """
 
 import json
+import time
 
 import requests
 
 
-class TrueRandomGenerator:
+class TrueRandomNumberGenerator:
     CONST_CITY_COORDINATE = (42.5255, -71.7642)
     CONST_A = 8191
     CONST_C = 524287
@@ -17,45 +18,42 @@ class TrueRandomGenerator:
 
     def __init__(self, coordinate=None):
         if coordinate:
-            self._seed_coordinate = coordinate
+            self._coordinate = coordinate
         else:
-            self._seed_coordinate = self.CONST_CITY_COORDINATE
-        self.seed = 0
+            self._coordinate = self.CONST_CITY_COORDINATE
+        self._seed = 0
 
     def _get_forecast_url(self, coordinate) -> str:
-        """Create dto backend instance.
-
-        Args:
-            coordinate: The coordinate of the city for which the weather forecast is drawn from.
-        """
-        try:
-            url = f"https://api.weather.gov/points/{coordinate[0]},{coordinate[1]}"
-            response = requests.get(url)
-            response.raise_for_status()
-            parsed_context = json.loads(response.content)
-            return parsed_context["properties"]["forecastHourly"]
-        except requests.exceptions.HTTPError as err:
-            print(err.response.text)
+        url = f"https://api.open-meteo.com/v1/forecast?latitude={coordinate[0]}&longitude=120&current=temperature_2m,relative_humidity_2m,wind_speed_10m,precipitation&wind_speed_unit=ms&temperature_unit=fahrenheit"
+        return url
 
     def _get_random_seed(self):
         """Create and store the random seed."""
         try:
-            forecast_url = self._get_forecast_url(self._seed_coordinate)
+            forecast_url = self._get_forecast_url(self._coordinate)
             response = requests.get(forecast_url)
             response.raise_for_status()
-
             parsed_context = json.loads(response.content)
-            all_forecasts = parsed_context["properties"]["periods"]
-            temp_list = [forecast["temperature"] for forecast in all_forecasts]
-            self.seed = sum(temp_list) // len(temp_list)
+            self._seed = parsed_context["current"]["temperature_2m"]
+            # rotate lat, long coordinates
+            lat = (self._coordinate[0] + 10) % 180
+            long = (self._coordinate[1] + 10) % 180
+            self._coordinate = (lat, long)
             return
         except requests.exceptions.HTTPError as err:
             print(err.response.text)
 
     def random(self):
         """Generate a random number between 0 and 1"""
-        if self.seed == 0:
+        if self._seed == 0:
             self._get_random_seed()
-        random_number = (self.CONST_A * self.seed + self.CONST_C) % self.CONST_M
-        self.seed = random_number
+        random_number = (self.CONST_A * self._seed + self.CONST_C) % self.CONST_M
+        self._seed = random_number
         return random_number / self.CONST_MAX_VAL
+
+
+if __name__ == "__main__":
+    generator = TrueRandomNumberGenerator()
+    for _ in range(20):
+        time.sleep(3)
+        print(generator.random())
