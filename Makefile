@@ -1,54 +1,43 @@
-SHELL := /bin/bash
+.PHONY: install clean build test lint format sort help
 
-# =============================================================================
-# Variables
-# =============================================================================
+# Install dependencies
+install:
+	poetry install
 
-.PHONY: upgrade
-upgrade:
-	@echo "=> Updating all dependencies"
-	@pdm update
-	@echo "=> Dependencies updated"
-
-.PHONY: clean
+# Clean build artifacts
 clean:
-	@echo "=> Cleaning working directory"
-	@rm -fr build/ -fr dist/
-	@echo "=> Cleaning working directory"
+	rm -rf dist/
+	rm -rf build/
+	rm -rf *.egg-info
 
-.PHONY: destroy
-destroy:
-	@echo "=> Removing .venv dir"
-	@rm -fr .venv
-	@echo "=> Removal complete"
+# Build the project
+build: clean lint format sort test
+	poetry build
 
-.PHONY: lock
-lock:
-	pdm update --update-eager --group :all
-
-# =============================================================================
-# Tests, Linting, Coverage
-# =============================================================================
-
-.PHONY: coverage
-coverage:
-	@echo "=> Running tests with coverage"
-	@pdm run pytest tests --cov -n auto
-	@pdm run coverage html
-	@echo "=> Coverage report generated"
-
-.PHONY: test
+# Run tests
 test:
-	@echo "=> Running test cases"
-	@pdm run pytest -v tests
-	@echo "=> Tests complete"
+	poetry run pytest -ra
 
-# =============================================================================
-# Build
-# =============================================================================
+# Lint code using mypy
+lint:
+	poetry run flake8 --ignore=E501 .
 
-.PHONY: build
-build:
-	@echo "=> Building wheel"
-	@pdm build
-	@echo "=> Building complete"
+# Format code using black
+format:
+	poetry run black .
+
+# Sort imports using isort
+sort:
+	poetry run isort .
+
+# Display help
+help:
+	@echo "Usage:"
+	@echo "  make install    Install dependencies using Poetry"
+	@echo "  make clean      Clean build artifacts"
+	@echo "  make build      Clean, lint, format, sort, and build the project using Poetry"
+	@echo "  make test       Run tests using pytest through Poetry"
+	@echo "  make lint       Validate code using mypy through Poetry"
+	@echo "  make format     Format code using black through Poetry"
+	@echo "  make sort       Sort imports using isort through Poetry"
+	@echo "  make help       Display this help message"

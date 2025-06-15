@@ -1,7 +1,8 @@
-from src.butterfly_generator.generator import ButterflyGenerator
+from src.generator.random_number_generator import TrueRandomGenerator
+
 
 def test_random_number_generation():
-    bg = ButterflyGenerator()
+    generator = TrueRandomGenerator()
     for _ in range(100):
-        random = bg.random()
-        assert random >= bg.CONST_MIN_VAL and random <= bg.CONST_MAX_VAL
+        random = generator.random()
+        assert random >= generator.CONST_MIN_VAL and random <= generator.CONST_MAX_VAL
