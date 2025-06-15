@@ -1,7 +1,7 @@
 [project]
-name = "TrueRandomNumberGenerator"
+name = "PseudoRandomNumberGenerator"
 version = "0.1.0"
-description = "Random number generator using weather data"
+description = "Pseudo Random number generator using weather data"
 authors = [
     {name = "Dr. Nobel Khandaker", email = "nobel@outlook.com"},
 ]
@@ -9,6 +9,7 @@ dependencies = [
     "requests>=2.32.3",
     "pytest>=8.2.2",
     "isort (>=6.0.1,<7.0.0)",
+    "tqdm (>=4.67.1,<5.0.0)",
 ]
 requires-python = ">=3.10"
 readme = "README.md"
