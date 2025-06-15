@@ -8,4 +8,4 @@ def test_random_number_generation():
     for _ in range(5):
         random = generator.random()
         time.sleep(1)
-        assert random >= generator.CONST_MIN_VAL and random <= generator.CONST_MAX_VAL
+        assert (next(random) >= generator.CONST_MIN_VAL and next(random) <= generator.CONST_MAX_VAL)

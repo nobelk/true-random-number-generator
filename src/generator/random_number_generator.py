@@ -3,7 +3,6 @@ It is used for generating random numbers based on hourly weather forecasting dat
 """
 
 import json
-import time
 
 import requests
 
@@ -44,16 +43,11 @@ class TrueRandomNumberGenerator:
             print(err.response.text)
 
     def random(self):
-        """Generate a random number between 0 and 1"""
+        """Generate a random seed between 0 and 1 using linear congruential generator."""
         if self._seed == 0:
             self._get_random_seed()
-        random_number = (self.CONST_A * self._seed + self.CONST_C) % self.CONST_M
-        self._seed = random_number
-        return random_number / self.CONST_MAX_VAL
-
-
-if __name__ == "__main__":
-    generator = TrueRandomNumberGenerator()
-    for _ in range(20):
-        time.sleep(3)
-        print(generator.random())
+        while True:
+            if self._seed == 0:
+                self._get_random_seed()
+            self._seed = (self.CONST_A * self._seed + self.CONST_C) % self.CONST_M
+            yield self._seed / self.CONST_MAX_VAL
